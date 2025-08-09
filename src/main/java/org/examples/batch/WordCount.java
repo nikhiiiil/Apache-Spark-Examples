@@ -21,7 +21,6 @@ public class WordCount {
 
     private SparkSession createSessionObj() {
         SparkConf conf = new SparkConf();
-        conf.set("spark.driver.extraJavaOptions", "--add-exports java.base/sun.nio.ch=ALL-UNNAMED");
         return SparkSession
                 .builder()
                 .config(conf)
@@ -52,11 +51,22 @@ public class WordCount {
             // Delete output folder if already present
             File outputFolder = new File(outputPath);
             if (outputFolder.exists()) {
-                outputFolder.delete();
+                obj.deleteDirectory(outputFolder);
             }
 
             // Save as a text file
             wordCounts.coalesce(1).saveAsTextFile(outputPath);
         }
     }
+
+    public boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
 }
