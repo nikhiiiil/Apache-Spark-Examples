@@ -32,7 +32,7 @@ public class WordCount {
     public static void main(String[] args) {
         WordCount obj = new WordCount();
         String inputPath = "src/main/resources/Lorem-Ipsum.txt";
-        String outputPath = "src/main/resources/word-count-output/";
+        String outputPath = "src/main/resources/output-word-count/";
         SparkContext sparkContext = obj.spark.sparkContext();
 
         try(JavaSparkContext jsc = new JavaSparkContext(sparkContext)) {
@@ -46,12 +46,12 @@ public class WordCount {
             JavaPairRDD<String, Integer> wordPair = words.mapToPair(word -> new Tuple2<>(word, 1));
 
             // Group each keys and sum its count, shuffle same keys to same executor
-            JavaPairRDD<String, Integer> wordCounts = wordPair.reduceByKey((a,b) -> a + b);
+            JavaPairRDD<String, Integer> wordCounts = wordPair.reduceByKey(Integer::sum);
 
             // Delete output folder if already present
             File outputFolder = new File(outputPath);
             if (outputFolder.exists()) {
-                obj.deleteDirectory(outputFolder);
+                System.out.println("Deleting output folder : " + obj.deleteDirectory(outputFolder));
             }
 
             // Save as a text file
