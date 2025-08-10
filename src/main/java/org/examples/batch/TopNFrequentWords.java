@@ -18,7 +18,7 @@ public class TopNFrequentWords {
                 .builder()
                 .config(new SparkConf())
                 .master("local[1]")
-                .appName("Top N Frequenct Words")
+                .appName("Top N Frequency Words")
                 .getOrCreate();
     }
 
